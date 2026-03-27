@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head> 
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TREENITY: Tree Inventory</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<style>
+:root {
+  --sage: #779a51;
+  --sage-dark: #688255;
+  --gold: #c9a44c;
+}
+/*bg*/
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.75);
+  z-index: -1;    
+  pointer-events: none;
+}
+ 
+
+@keyframes fadeInBg {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/*hdr*/
+h1 {
+  background: linear-gradient(135deg, var(--sage), var(--sage-dark));
+  color: #1c542b;
+  padding: 30px;
+  margin: 0;
+  text-align: center;
+  border-bottom: 7px solid var(--gold);
+}
+
+.summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 15px;
+  padding: 20px;
+}
+
+
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 15px;
+  text-align: center;
+  font-weight: bold;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.green { border-left: 6px solid #4CAF50; }
+.yellow { border-left: 6px solid #FFC107; }
+.orange { border-left: 6px solid #c78d10; }
+.red { border-left: 6px solid #F44336; }
+
+.filters {
+  display: flex;
+  gap: 10px;
+  padding: 0 20px;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 15px;
+  text-align: center;
+  font-weight: bold;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.green { border-left: 6px solid #4CAF50; }
+.yellow { border-left: 6px solid #FFC107; }
+.orange { border-left: 6px solid #c78d10; }
+.red { border-left: 6px solid #F44336; }
+
+.filters {
+  display: flex;
+  gap: 10px;
+  padding: 0 20px;
+}
+
+.filters input, .filters select {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.inventory-list {
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 15px;
+}
+
+/*bg*/
+body {
+  margin: 0;
+  font-family: "Times New Roman", serif;
+  background-color: rgba(100, 175, 75, 0.532);
+  background-size: cover;
+  animation: fadeInBg 1s ease-in-out forwards;
+  opacity: 1;
+}
+.search { position: fixed; 
+    top: 20px; left: 320px; 
+    z-index: 100001; 
+    background: white; 
+    padding: 5px; 
+    border-radius: 4px; 
+    box-shadow: 0 0 5px rgba(0,0,0,0.3); 
+    z-index: 1001;
+ }
+
+/*side*/
+#sideMenu {
+  position: fixed;
+  margin-top:40px;
+  top:15px;  
+  left: -260px; 
+  width: 260px;
+  height: 100%;
+  background:linear-gradient(135deg, var(--sage), var(--sage-dark));
+  color: white;
+  padding: 0px;
+  transition: left 0.4s ease;
+  z-index: 99999;
+  overflow-y: auto;
+
+}
+#sideMenu.open { left: 0; }
+
+/*mnubttn*/
+#menuBtn {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  width: 55px;
+  height: 55px;
+  font-size: 32px;
+  font-weight: bold;
+  background: #779a51;
+  color: #c9a44c;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  z-index: 100000;
+}
+#menuBtn:hover {
+  box-shadow:
+    0 0 10px rgba(201, 164, 76, 0.8),
+    0 0 20px rgba(201, 164, 76, 0.6),
+    0 0 30px rgba(201, 164, 76, 0.4);
+  transform: scale(1.05);
+}
+
+/*tr inv*/
+.menu-item {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: white;
+  text-align: left;
+  padding: 12px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.menu-item:hover {
+  background: rgba(255,255,255,0.25);
+}
+/*mp*/
+#map {
+  width: 90%;
+  height: 600px;
+  margin: 30px auto;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(218, 167, 64, 0.34);
+}
+
+
+
+.telegram-float:hover {
+  transform: translateY(-3px);
+}
+
+#inventoryList {
+  margin-top: 15px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.inventory-list {
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.inventory-card {
+  background: white; /* Changed from transparent to white for better visibility */
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  border-top: 5px solid var(--sage);
+  transition: transform 0.2s;
+}
+
+.inventory-card:hover {
+  transform: translateY(-5px);
+}
+
+.inventory-card {
+  background: rgba(255,255,255,0.15);
+  padding: 10px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+</style>
+</head>
+
+<body>
+
+
+<button id="menuBtn">☰</button>
+
+<div id="sideMenu">
+  <h3>🌿 Menu 🌿</h3>
+  <a href="gps.html" style="color:white; text-decoration:none; padding:10px; display:block;">🌳 Back to Home Page 🌳</a>
+</div>
+
+<h1> 🌱 Treenity: Tree Inventory 🌱</h1>
+
+<section class="summary">
+  <div class="card ">🌲 <span id="totalTrees">0</span><br>Total Trees</div>
+ 
+</section>
+
+<input type="text" id="searchInput" placeholder="Search tree type...">
+<section class="filters">
+  
+
+</section>
+
+<section id="inventoryList" class="inventory-list">
+  <!-- Cards inserted by JS -->
+</section>
+
+<section id="inventoryList" class="inventory-list">
+  </section>
+
+<script>
+
+const menuBtn = document.getElementById("menuBtn");
+const sideMenu = document.getElementById("sideMenu");
+
+menuBtn.addEventListener("click", () => {
+    sideMenu.classList.toggle("open");
+});
+
+const INVENTORY_URL = "https://script.google.com/macros/s/AKfycbzeoWR-nTLWL-iAHKflK3Y6Fov94X7Xo-AvMsdWaWBMvCiHLyS1F7bzIsyR9SZ7ibbb/exec";
+
+let allTrees = []; // Store data globally for filtering
+
+async function fetchInventory() {
+    try {
+        const response = await fetch(INVENTORY_URL);
+        allTrees = await response.json();
+        renderTrees(allTrees); // Initial render
+    } catch (err) {
+        console.error("Error loading trees:", err);
+    }
+}
+
+
+function renderTrees(data) {
+    const list = document.getElementById("inventoryList");
+    list.innerHTML = "";
+
+    data.forEach(tree => {
+        const card = document.createElement("div");
+        card.className = "inventory-card";
+        card.innerHTML = `
+            <div style="color: #1c542b; font-weight: bold; border-bottom: 1px solid #ddd; margin-bottom: 5px;">
+                ${(tree.type || "Unknown").toUpperCase()}
+            </div>
+            <b>Loc:</b> ${tree.lat}, ${tree.lng}
+        `;
+        list.appendChild(card);
+    });
+
+    document.getElementById("totalTrees").textContent = data.length;
+}
+
+function filterData() {
+    const searchTerm = document.getElementById("searchInput").value.toLowerCase();
+
+    const filtered = allTrees.filter(tree => {
+      return (tree.type || "").toLowerCase().includes(searchTerm);
+    });
+
+    renderTrees(filtered);
+}
+
+document.getElementById("searchInput").addEventListener("input", filterData);
+
+fetchInventory();
+</script>
+
+</body>
+</html>
