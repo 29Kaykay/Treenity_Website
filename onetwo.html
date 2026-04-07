@@ -239,7 +239,7 @@ body {
 
 <div id="sideMenu">
   <h3>🌿 Menu 🌿</h3>
-  <a href="gps.html" style="color:white; text-decoration:none; padding:10px; display:block;">🌳 Back to Home Page 🌳</a>
+  <a href="index.html" style="color:white; text-decoration:none; padding:10px; display:block;">🌳 Back to Home Page 🌳</a>
 </div>
 
 <h1> 🌱 Treenity: Tree Inventory 🌱</h1>
@@ -273,13 +273,13 @@ menuBtn.addEventListener("click", () => {
 
 const INVENTORY_URL = "https://script.google.com/macros/s/AKfycbzeoWR-nTLWL-iAHKflK3Y6Fov94X7Xo-AvMsdWaWBMvCiHLyS1F7bzIsyR9SZ7ibbb/exec";
 
-let allTrees = []; // Store data globally for filtering
+let allTrees = [];
 
 async function fetchInventory() {
     try {
         const response = await fetch(INVENTORY_URL);
         allTrees = await response.json();
-        renderTrees(allTrees); // Initial render
+        renderTrees(allTrees);
     } catch (err) {
         console.error("Error loading trees:", err);
     }
