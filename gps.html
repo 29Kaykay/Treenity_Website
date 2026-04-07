@@ -166,7 +166,7 @@ body {
 
 <div id="tut-overlay"></div>
 
-<img src="BIRD.png" id="tut-bird" alt="Guide Character">
+<img src="maya.png" id="tut-bird" alt="Guide Character">
 
 <div id="tut-card" style="display:none;">
     <h3 id="tut-title" style="margin-top:0; color:var(--sage-dark);">Welcome!</h3>
@@ -219,7 +219,7 @@ const satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/servi
 osm.addTo(map);
 L.control.layers({"Street Map": osm, "Satellite": satellite}).addTo(map);
 
-const usagiIcon = L.icon({ iconUrl: 'BIRD.png', iconSize: [40, 40], iconAnchor: [20, 40], popupAnchor: [0, -40] });
+const usagiIcon = L.icon({ iconUrl: 'maya.png', iconSize: [40, 40], iconAnchor: [20, 40], popupAnchor: [0, -40] });
 
 function saveMarkerToStorage(markerObj) {
     let saved = JSON.parse(localStorage.getItem('treenity_markers')) || [];
